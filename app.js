@@ -44,8 +44,14 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(passport.initialize());
 app.use(passport.session());
 
-const indexRouter = require('./routes/index');
+const { isLoggedIn } = require('./routes/middlewares');
+
+const indexRouter = express.Router();
+const IndexRouteHandler = require('./routes/index');
+indexRouter.get('/', IndexRouteHandler.signUpAccount);
+indexRouter.post('/domain', isLoggedIn, IndexRouteHandler.createDomainRecord);
 app.use('/', indexRouter);
+
 
 const authRouter = require('./routes/auth');
 app.use('/auth', authRouter);
