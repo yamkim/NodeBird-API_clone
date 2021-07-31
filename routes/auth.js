@@ -27,7 +27,7 @@ const AuthRouteHandler = {
     }
   },
 
-  signInAccount: function() {
+  signInAccount: function(req, res, next) {
     passport.authenticate('local', (authError, user, info) => {
       if (authError) {
         console.error(authError);
