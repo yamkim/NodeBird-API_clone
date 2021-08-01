@@ -35,5 +35,4 @@ const IndexRouteHandler = {
     }
 }
 
-
 module.exports = IndexRouteHandler;

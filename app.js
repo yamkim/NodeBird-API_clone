@@ -45,7 +45,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const { isLoggedIn } = require('./routes/middlewares');
-
 const indexRouter = express.Router();
 const IndexRouteHandler = require('./routes/index');
 indexRouter.get('/', IndexRouteHandler.signUpAccount);
@@ -55,6 +54,9 @@ app.use('/', indexRouter);
 
 const authRouter = require('./routes/auth');
 app.use('/auth', authRouter);
+
+const tokenRouter = require('./routes/v1');
+app.use('/v1', tokenRouter);
 
 app.use((req, res, next) => {
   const error =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
