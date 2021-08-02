@@ -57,8 +57,8 @@ app.use('/auth', authRouter);
 
 const v1Router = require('./routes/v1');
 app.use('/v1', v1Router);
-// const v2Router = require('./routes/v2');
-// app.use('/v2', v2Router);
+const v2Router = require('./routes/v2');
+app.use('/v2', v2Router);
 
 app.use((req, res, next) => {
   const err =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`);

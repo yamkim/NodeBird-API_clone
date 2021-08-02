@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 
-const { verifyToken, deprecated } = require('./middlewares');
+const { verifyToken, apiLimiter } = require('./middlewares');
 const { Post, Domain, User, Hashtag } = require('../models');
 const { handleResponse } = require('../libs/handleResponse')
 
@@ -36,7 +36,7 @@ async function signJwtToken(domain) {
     return ret;
 }
 
-const v1RouteHandler = {
+const v2RouteHandler = {
     setJwtToken: async function(req, res, next) {
         try {
             const domain = await readDomainRecord(req, res);
@@ -81,13 +81,12 @@ const v1RouteHandler = {
     testJwtToken: function(req, res, next) {
         res.json(req.decoded);
     }
+
 }
 
-router.use(deprecated);
-
-router.post('/token', v1RouteHandler.setJwtToken);
-router.get('/test', verifyToken, v1RouteHandler.testJwtToken);
-router.get('/posts/my', verifyToken, v1RouteHandler.returnAllPostsForUser);
-router.get('/posts/hashtag/:title', verifyToken, v1RouteHandler.returnAllPostsAboutHashtag);
+router.post('/token', apiLimiter, v2RouteHandler.setJwtToken);
+router.get('/test', verifyToken, apiLimiter, v2RouteHandler.testJwtToken);
+router.get('/posts/my', verifyToken, apiLimiter, v2RouteHandler.returnAllPostsForUser);
+router.get('/posts/hashtag/:title', verifyToken, apiLimiter, v2RouteHandler.returnAllPostsAboutHashtag);
 
 module.exports = router;

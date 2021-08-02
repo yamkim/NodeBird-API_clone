@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const handleResponse = require('../libs/handleResponse')
-const RateLimit = require('express-rate-limit');
+const rateLimit = require('express-rate-limit');
 
 exports.isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -34,21 +34,23 @@ exports.verifyToken = (req, res, next) => {
   }
 }
 
-exports.apiLimiter = new RateLimit({
+// FIXME: 라우터 내에서 handleResponse 함수 사용 왜 안될까..
+exports.apiLimiter = new rateLimit({
 	windowMs: 60 * 1000,
-	max: 10,
+	max: 3,
 	delayMs: 0,
-	handler(req, res) {
-	res.status(this.statusCode).json({
-		code: this.statusCode,
-		message: '1 분에 한 번만 요청할 수 있습니다.'
-	})
-	}
+  handler(req, res) {
+    res.status(this.statusCode).json({
+      code: this.statusCode, // 기본값 429
+      message: '제한된 요청 횟수를 초과했습니다. 잠시 후 다시 시도해주세요!',
+    });
+  },
 });
 
-exports.deprecated = (req, res) => {
+exports.deprecated = (req, res, next) => {
+  // return handleResponse(410, res);
   res.status(410).json({
     code: 410,
     message: '새로운 버전이 나왔습니다. 새로운 버전을 사용하세요!',
-  })
+  });
 }
