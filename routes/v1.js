@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const { verifyToken } = require('./middlewares');
 const { Post, Domain, User, Hashtag } = require('../models');
-const handleResponse = require('../libs/HandleResponse')
+const { handleResponse } = require('../libs/handleResponse')
 
 const router = express.Router();
 
@@ -29,7 +29,7 @@ async function signJwtToken(domain) {
     };
     const secret = process.env.JWT_SECRET;
     const option = {
-        expiresIn: '10m',
+        expiresIn: '55m',
         issuer: 'nodebird'
     }
     const ret = await jwt.sign(payload, secret, option);
@@ -41,11 +41,8 @@ const v1RouteHandler = {
         try {
             const domain = await readDomainRecord(req, res);
             const token = await signJwtToken(domain);
-            return res.json({
-                code: 200,
-                message: '토큰이 발급되었습니다.',
-                token,
-            });
+            const tokenMsg = '토큰이 발급되었습니다.';
+            return res.json({ code: 200, message: tokenMsg, token });
         } catch (err) {
             console.error(err);
             return handleResponse(500, res)
@@ -64,13 +61,14 @@ const v1RouteHandler = {
         }
     },
 
-    returnAllPostsAboutHashtag: async function (req, res) {
+    returnAllPostsAboutHashtag: async function (req, res, next) {
         // req.params.title: 원하는 hashtag 이름입니다.
         try {
             const hashtag = await Hashtag.findOne({
                 where: { title: req.params.title }
             });
             if (!hashtag) {
+                console.log('hashtag 없는 구문으로');
                 return handleResponse(404, res);
             }
             const posts = await hashtag.getPosts();

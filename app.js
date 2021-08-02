@@ -55,13 +55,15 @@ app.use('/', indexRouter);
 const authRouter = require('./routes/auth');
 app.use('/auth', authRouter);
 
-const tokenRouter = require('./routes/v1');
-app.use('/v1', tokenRouter);
+const v1Router = require('./routes/v1');
+app.use('/v1', v1Router);
+// const v2Router = require('./routes/v2');
+// app.use('/v2', v2Router);
 
 app.use((req, res, next) => {
-  const error =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
-  error.status = 404;
-  next(error);
+  const err =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
+  err.status = 404;
+  next(err);
 });
 
 app.use((err, req, res, next) => {
