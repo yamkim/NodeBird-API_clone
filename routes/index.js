@@ -1,8 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const { User, Domain } = require('../models');
 
-// const router = express.Router();
-
 const IndexRouteHandler = {
     signUpAccount: async function (req, res, next) {
         try {
